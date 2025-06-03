@@ -16,12 +16,12 @@ const body = JSON.stringify({
   "parameter": "default",
   "commandType": "command"
 });
-const deviceId = "DC:DA:0C:AB:5D:4C";
+const deviceId = "DCDA0CAB5D4E";
 const options = {
   hostname: 'api.switch-bot.com',
   port: 443,
-  path: `/v1.1/devices/${deviceId}/commands`,
-  method: 'POST',
+  path: `/v1.1/devices`,
+  method: 'GET',
   headers: {
     "Authorization": token,
     "sign": sign,
