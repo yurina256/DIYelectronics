@@ -25,8 +25,8 @@ void loop() {
     Serial.print("wheelpos_next: ");
     Serial.println(wheelpos_next);
   }
-  if(wheelpos < wheelpos_next) wheelpos += 1;
-  if(wheelpos > wheelpos_next) wheelpos -= 1;
+  if(wheelpos < wheelpos_next) wheelpos = min(wheelpos_next,wheelpos + 2);
+  if(wheelpos > wheelpos_next) wheelpos = max(wheelpos_next,wheelpos - 2);
   for (int i=0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i,getHtmlColorFromValue(wheelpos));
     strip.show();
