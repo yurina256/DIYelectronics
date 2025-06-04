@@ -23,7 +23,7 @@ port.open((err) => {
   setInterval(() => {
     mod.get_weight().then(weight => {
       console.log(weight);
-      /* arduino側でRGB指定かと思ったけど違った　もったいないので残しておく
+      /* arduino側で補完するには結局向こうで変換する
       var tmp = mod.getRgbFromValue(Math.min(100,weight/4));
       const R = tmp[0];
       const G = tmp[1];
@@ -32,7 +32,7 @@ port.open((err) => {
       dataToSend = R*65536 + G*256 + B;
       //console.log(dataToSend);
       */
-     dataToSend = Math.floor(Math.max(0,Math.min(100,weight/4)));
+      dataToSend = Math.floor(Math.max(0,Math.min(100,weight/4)));
       port.write(dataToSend + '\n', (err) => { // 改行を追加してArduinoで読み取りやすくする
         if (err) {
           return console.error('データの書き込みエラー:', err.message);
