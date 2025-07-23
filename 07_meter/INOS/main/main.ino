@@ -1,6 +1,6 @@
-const int dig1 = 13;
+const int dig1 = 2;
 const int dig2 = 1;
-const int dig3 = 2;
+const int dig3 = 13;
 const int dig4 = 4;
 
 const int a = 12;
@@ -44,6 +44,9 @@ void setup() {
   
   // 全てのセグ(A-G,DP)をクリア
   clearSegment();
+
+  //シリアル通信
+  Serial.begin(9600);
 }
 void disp(int dig,int num){
   clearSegment(); clearDigit(); 
@@ -145,13 +148,45 @@ void disp(int dig,int num){
     default: // 0-9以外の数字が来た場合、全てオフにするか、エラー表示など
       break;
   }
+  if(dig==dig2) digitalWrite(dp,LOW);
   delayMicroseconds(50);    
 }
 void meter(int val){
-  analogWrite(PWM,val);  
+  double v = val;
+  v /= 1000;
+  v *= 255;
+  int vt = (int) v;
+  analogWrite(PWM,vt);  
+}
+void dispmem(int val){
+  //int valt = 800;
+  //valt *= val;
+  //valt /= 1000;
+  //Serial.println(valt);
+  int valt = val;
+  //disp(dig1,valt/1000);
+  //disp(dig1,5);
+  disp(dig2,(valt/100)%10);
+  disp(dig3,(valt/10)%10);
+  disp(dig4,valt%10);
 }
 void loop() {
+  if (Serial.available() > 0) { // シリアルデータが利用可能かチェック
+    int receivedInt = Serial.parseInt();//0-100
+    while (Serial.available()) {
+      Serial.read();
+    }
+    int cpustatus = receivedInt/10000;
+    int memstatus = receivedInt%10000;// 456 = 45.6%
+    meter(cpustatus);
+    //Serial.println(cpustatus);
+    delay(100);
+    dispmem(memstatus);
+    //Serial.println(memstatus);
+  }
+  /*
   disp(dig3,9);
   disp(dig3,-1);
   meter(255);
+  */
 }

@@ -3,6 +3,7 @@ const { resolve } = require('path');
 
 
 exports.get_stats = function get_stats() {
+  return new Promise((resolve, reject) => {
   const options = {
     hostname: 'localhost',
     port: 8085,
@@ -31,7 +32,12 @@ exports.get_stats = function get_stats() {
         console.log(`memoryusage: ${jsonData.Children[0].Children[2].Children[0].Children[0].Value}`);
         const cpuusage = jsonData.Children[0].Children[1].Children[2].Children[0].Value;
         const memoryusage = jsonData.Children[0].Children[2].Children[0].Children[0].Value;
-        resolve(cpuusage * 1000 + memoryusage);
+        const regex = /(\d+(\.\d+)?)/; // 数値を抽出する正規表現
+        let cmatch = cpuusage.match(regex);
+        let mmatch = memoryusage.match(regex);
+        cmatch = cmatch ? parseFloat(cmatch[0]) : 0;
+        mmatch = mmatch ? parseFloat(mmatch[0]) : 0;
+        resolve(parseInt(cmatch * 100000 + (mmatch*8/100)));
       } catch (error) {
         console.error('JSONのパースに失敗しました:', error);
         console.error('受信した生データ:', data);
@@ -43,5 +49,6 @@ exports.get_stats = function get_stats() {
     console.error(error);
   });
 
-  req.end();
+  req.end();    
+  })
 }

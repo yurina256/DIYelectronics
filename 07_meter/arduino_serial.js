@@ -1,5 +1,5 @@
 const { SerialPort, ReadlineParser } = require('serialport');
-const getcpu = require("./get_cpustatus");
+const mod = require("./mod");
 // Arduinoが接続されているシリアルポートのパス
 // Windows: 'COMx' (例: 'COM3')
 // macOS/Linux: '/dev/tty.usbmodemXXXX' または '/dev/ttyUSBx', '/dev/ttyACM0' など
@@ -21,7 +21,7 @@ port.open((err) => {
 
   let toggle = 0;
   setInterval(() => {
-    getcpu.get_cpustatus().then(val => {
+    mod.get_stats().then(val => {
       console.log(val);
       /* こっちも結局向こうで変換する
       */
@@ -29,11 +29,11 @@ port.open((err) => {
         if (err) {
           return console.error('データの書き込みエラー:', err.message);
         }
-        console.log('送信データ:', dataToSend);
+        console.log('送信データ:', val);
       });
       toggle = 1 - toggle; // トグル
     })
-  }, 10000); // 2秒ごとに送信
+  }, 100); // 0.3秒ごとに送信
 
 });
 
